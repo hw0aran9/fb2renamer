@@ -26,7 +26,7 @@ namespace fb2renamer
                 {
                     fb2count += 1;
                     Console.WriteLine(Path.GetFileName(fName));
-
+                    //TODO: Сделать создание структуры папок
                     //TODO: сделать очистку имени файла от мусорных символов, не равных "." "А-Я" "A-Z"
                     //TODO: сделать транслитерацию названий файла по желанию пользователя
                 }
@@ -35,16 +35,20 @@ namespace fb2renamer
 
             Console.ReadLine();
         }
+        static void CreateFolders()
+        {
+            string[] folders = { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я" };
 
+        }
 
         public string CleanedFileName(string filename)
             
         {
             Regex regex = new Regex("([a-zA-Zа-яА-Я])");
             char[] array = filename.ToCharArray();
-            for (int i=0; i<=filename.Length; i++)
+            foreach (char ch in array)
             {
-                array[i] = ;
+               
             }
 
             filename = filename.Trim();
