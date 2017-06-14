@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.IO;
 
+//TODO: сделать очистку имени файла от мусорных символов, не равных "." "А-Я" "A-Z"
+//TODO: сделать транслитерацию названий файла по желанию пользователя
+
 namespace fb2renamer
 {
     class Program
@@ -26,8 +29,6 @@ namespace fb2renamer
                 {
                     fb2count += 1;
                     Console.WriteLine(Path.GetFileName(fName));
-                    //TODO: сделать очистку имени файла от мусорных символов, не равных "." "А-Я" "A-Z"
-                    //TODO: сделать транслитерацию названий файла по желанию пользователя
                 }
             }
             Console.WriteLine("Книг fb2 найдено: {0}", fb2count);
@@ -35,14 +36,14 @@ namespace fb2renamer
         }
         static void CreateFolders(int param)
         {
+            string[] rus_folders = { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я" };
+            string currDir = Directory.GetCurrentDirectory();
             switch (param)
             {
                 case 0:
                     DeleteEmptyFolders();
                     break;
                 case 1:
-                    string[] rus_folders = { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я" };
-                    string currDir = Directory.GetCurrentDirectory();
                     for (int i = 0; i < rus_folders.Length; i++)
                     {
                         string newDir = String.Concat(currDir, "\\Sorted_Books\\", rus_folders[i]);
@@ -56,8 +57,7 @@ namespace fb2renamer
                             Console.WriteLine(e);
                             break;
                         }
-            }
-            Console.WriteLine("Структура папок создана.");
+                    }
                     break;
             }
         }
@@ -65,10 +65,9 @@ namespace fb2renamer
         static void DeleteEmptyFolders()
         {
             Console.WriteLine("deleted"); 
-         
         }
 
-        public string CleanedFileName(string filename)
+        static string CleanedFileName(string filename)
             
         {
             Regex regex = new Regex("([a-zA-Zа-яА-Я])");
@@ -81,16 +80,29 @@ namespace fb2renamer
             return filename;
         }
 
-        public void LoadBookData()
+        static string NewBookName(string filename)
+        {
+            string currDir = Directory.GetCurrentDirectory();
+            String xmlString = File.ReadAllText(filename);
+            XDocument book = XDocument.Load(new StringReader(xmlString)); // передавать сюда вместе с путем ?
+            string book_title = book.Root.Element("book-title").ToString();
+            string newname = String.Concat(book_title, "-new");
+            return book_title;
+        }
+        
+        public void RenameBook()
         {
             
         }
-        
+
         static void Main(string[] args)
         {
             Console.Title = "FB2 Renamer";
+            string currDir = Directory.GetCurrentDirectory();
             Init();
-            CreateFolders(0);
+            CreateFolders(1);
+            string newname = String.Concat(currDir, "//test.fb2");
+            Console.WriteLine(NewBookName(newname));
             Console.ReadLine();
         }
     }
